@@ -89,7 +89,7 @@ print 'Bouts to be displayed:'
 print '<br>'
 cursor.execute("select bout_id from round_bouts")
 
-print '<select name = "team", multiple>'                                                                   \
+print '<select name = "bout", multiple>'                                                                   \
 
 for row in cursor:
     print '<option value = ' + row[0] + ' >' + row[0] + '</option>'
