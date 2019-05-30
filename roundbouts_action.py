@@ -36,7 +36,7 @@ form = cgi.FieldStorage()
  
 d = u = c = s = 0
 b_id = m_id = sq = f1a = f2a = f3a = f1b = f2b = f3b = 0
-a = f = tup = 0
+a = b = tup = 0
  
 cursor.execute("show columns from round_bouts")
 columns = {str(col[0]) for col in cursor.fetchall()}
@@ -99,40 +99,40 @@ if form.getvalue('b_id'):
  
 if form.getvalue('attr'):
     a = form.getvalue('attr')
-    f = form.getvalue('fencer')
-    if None in (a,f):
-        printAndRaise('Missing info required to display fencers')
+    b = form.getvalue('bout')
+    if None in (a,b):
+        printAndRaise('Missing info required to display bouts')
     if str(a)[0] == "[":
         aStr = ""
         for val in a:
             aStr += val + ", "
         a = aStr[:-2]
         
-    if str(f)[0] == "[":
-        fStr = ()
-        for val in f:
-            fStr = fStr + (str(val),)
-        f = fStr
+    if str(b)[0] == "[":
+        bStr = ()
+        for val in b:
+            bStr = bStr + (str(val),)
+        b = bStr
         tup = 1
     else:
-        f = str(f)
+        b = str(b)
  
     l = 1
     if tup:
-        l = len(f)
-        b = a.split(", ")
-        for at in b:
+        l = len(b)
+        aSplit = a.split(", ")
+        for at in aSplit:
             if at not in columns:
-               printAndRaise('Column submitted is not a column in fencers')
+               printAndRaise('Column submitted is not a column in bouts')
     else:
         if a not in columns:
-            printAndRaise('Column submitted is not a column in fencers')
-    query = "select " + a + " from fencers where fencer_id in (" + ("%s, " * l)
+            printAndRaise('Column submitted is not a column in bouts')
+    query = "select " + a + " from bouts where bout_id in (" + ("%s, " * l)
     query = query[:-2] + ")"
     if tup:
-        cursor.execute(query, f)
+        cursor.execute(query, b)
     else:
-        cursor.execute(query, (f,))
+        cursor.execute(query, (b,))
     print "Data returned from columns " + a + ":"
     for res in cursor:
         print "<br>"
