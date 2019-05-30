@@ -34,62 +34,68 @@ import cgi, cgitb
  
 form = cgi.FieldStorage()
  
-d = u = c = i = n = t = sq = a = f = tup = 0
+d = u = c = s = 0
+b_id = m_id = sq = f1a = f2a = f3a = f1b = f2b = f3b = 0
+a = f = tup = 0
  
-cursor.execute("show columns from fencers")
+cursor.execute("show columns from round_bouts")
 columns = {str(col[0]) for col in cursor.fetchall()}
  
 if form.getvalue('delete'):
     d = form.getvalue('delete')
     if d == None:
-        printAndRaise('Missing info required to delete fencer')
+        printAndRaise('Missing info required to delete bout')
     d = str(d)
  
-    query = "delete from fencers where fencer_id = %s"
+    query = "delete from round_bouts where bout_id = %s"
     cursor.execute(query, (d,))
     cnx.commit()
-    print "<h2>Fencer with ID %s has been removed from the match.</h2>" % d
+    print "<h2>Bout with ID %s has been removed from the match.</h2>" % d
  
 if form.getvalue('update'):
     u = form.getvalue('update')
     c = form.getvalue('column')
     s = form.getvalue('set')
     if None in (u,c,s):
-        printAndRaise('Missing info required to update fencer')
+        printAndRaise('Missing info required to update bout')
     u = str(u)
     c = str(c)
     s = str(s)
  
     if c not in columns:
-        printAndRaise('Column submitted is not a column in fencers')
+        printAndRaise('Column submitted is not a column in round_bouts')
         
-    query = "update fencers set " + c + "= %s where fencer_id = %s"
+    query = "update round_bouts set " + c + "= %s where bout_id = %s"
     cursor.execute(query, (s,u))
     cnx.commit()
-    print "<h2>%s for Fencer with ID %s has been updated to %s.</h2>" % (c, u, s)
+    print "<h2>%s for bout with ID %s has been updated to %s.</h2>" % (c, u, s)
     
-if form.getvalue('id'):
-    i = form.getvalue('id')
-    n = form.getvalue('name')
-    t = form.getvalue('team')
+if form.getvalue('b_id'):
+    b_id = form.getvalue('b_id')
+    m_id = form.getvalue('m_id')
     sq = form.getvalue('squad')
-    if None in (i,n,t,sq):
-        printAndRaise('Missing info required to insert new fencer')
-    i = str(i)
-    n = str(n)
-    t = str(t)
+
+    f1a = form.getvalue(‘f1a’)
+    f2a = form.getvalue(‘f2a’)
+    f3a = form.getvalue(‘f3a’)
+    f1b = form.getvalue(‘f1b’)
+    f2b = form.getvalue(‘f2b’)
+    f3b = form.getvalue(‘f3b’)
+
+    if None in (b_id,m_id,sq):
+        printAndRaise('Missing info required to insert new bout')
+    b_id = str(b_id)
+    m_id = str(m_id)
     sq = str(sq)
-    query = "select * from fencers where fencer_id = %s"
+    query = "select * from bouts where bout_id = %s"
     cursor.execute(query,(i,))
     result = cursor.fetchall()
     if len(result) != 0:
-        printAndRaise('Fencer with this ID already exists')
-    query = "insert into fencers values (%s, %s, 0,0,0,0)"
-    cursor.execute(query, (i,n))
-    query = "insert into team_members values (%s, %s, %s)"
-    cursor.execute(query, (t,i,sq))
+        printAndRaise('Bout with this ID already exists')
+    query = "insert into round_bouts values (%s, %s, %s, %s, %s, %s, %s, %s, %s)"
+    cursor.execute(query, (b_id, m_id, sq, f1a, f2a, f3a, f1b, f2b, f3b))
     cnx.commit()
-    print "<h2>Fencer %s with ID %s has been added to the match.</h2>" % (n,i)
+    print "<h2>Bout with ID %s has been added to the match.</h2>" % (b_id)
  
 if form.getvalue('attr'):
     a = form.getvalue('attr')
