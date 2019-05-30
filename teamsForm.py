@@ -1,4 +1,4 @@
-#!/usr/bin/python                                                                                        
+#!/usr/bin/python                                                                                           
 
 import mysql.connector
 
@@ -12,7 +12,7 @@ print '<head>'
 print '</head>'
 print '<body>'
 
-#DELETE                                                                                                  
+#DELETE                                                                                                     
 cursor.execute("select team_id, team_name from teams")
 print 'Which team would you like to delete?'
 print '<form action = "/~bbroder/cgi-bin/teams_action.py" method = "post">'
@@ -27,13 +27,13 @@ print '<p>'
 print '*****'
 print '</p>'
 
-#UPDATE                                                                                                  
+#UPDATE                                                                                                     
 cursor.execute("select team_id, team_name from teams")
 print 'Which team would you like to update?'
 print '<form action = "/~bbroder/cgi-bin/teams_action.py" method = "post">'
 print '<select name = "update">'
 for row in cursor:
-    print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1]                                   \
+    print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1]                                      \
 
 print '</select>'
 
@@ -48,13 +48,25 @@ print '</select>'
 print '<br>New Value: <input type = "text" name = "set">  <br />'
 
 print '<br><input type = "submit" value = "Submit" />'
-print '</form>' 
+print '</form>'
 
 print '<p>'
 print '*****'
 print '</p>'
 
-#SELECT                                                                                                  
+#INSERT                                                                                                     
+print 'New Team to Insert:'
+print '<form action = "/~bbroder/cgi-bin/teams_action.py" method = "post">'
+print 'Team ID: <input type = "text" name = "id">  <br />'
+print 'Team Name: <input type = "text" name = "name">  <br />'
+print '<input type = "submit" value = "Submit" />'
+print '</form>'
+
+print '<p>'
+print '*****'
+print '</p>'
+
+#SELECT                                                                                                     
 print '<form action = "/~bbroder/cgi-bin/teams_action.py" method = "POST">'
 cursor.execute("show columns from teams")
 print 'Columns to be displayed:'
@@ -70,7 +82,7 @@ print 'Teams to be displayed:'
 print '<br>'
 cursor.execute("select team_id, team_name from teams")
 
-print '<select name = "team", multiple>'                                                                \
+print '<select name = "team", multiple>'                                                                   \
 
 for row in cursor:
     print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1] + '</option>'
