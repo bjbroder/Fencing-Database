@@ -1,9 +1,8 @@
-#!/usr/bin/python                                                                                
+#!/usr/bin/python                                                                                      
 
 import mysql.connector
 
-cnx = mysql.connector.connect(user='bbroder', password='dbkey', host='localhost', database='bbro\
-der1')
+cnx = mysql.connector.connect(user='bbroder', password='dbkey', host='localhost', database='bbroder1')
 
 cursor = cnx.cursor()
 
@@ -13,7 +12,7 @@ print '<head>'
 print '</head>'
 print '<body>'
 
-#DELETE                                                                                          
+#DELETE                                                                                                
 cursor.execute("select fencer_id, fencer_name from fencers")
 print 'Which fencer would you like to delete?'
 print '<form action = "/~bbroder/cgi-bin/fencers_action.py" method = "post">'
@@ -28,7 +27,7 @@ print '<p>'
 print '*****'
 print '</p>'
 
-#UPDATE                                                                                          
+#UPDATE                                                                                                
 cursor.execute("select fencer_id, fencer_name from fencers")
 print 'Which fencer would you like to update?'
 print '<form action = "/~bbroder/cgi-bin/fencers_action.py" method = "post">'
@@ -52,7 +51,7 @@ print '<p>'
 print '*****'
 print '</p>'
 
-#INSERT                                                                                          
+#INSERT                                                                                                
 print 'New Fencer to Insert:'
 print '<form action = "/~bbroder/cgi-bin/fencers_action.py" method = "post">'
 print 'Fencer ID: <input type = "text" name = "id">  <br />'
@@ -76,7 +75,7 @@ print '<p>'
 print '*****'
 print '</p>'
 
-#SELECT                                                                                          
+#SELECT                                                                                                
 print '<form action = "/~bbroder/cgi-bin/fencers_action.py" method = "POST">'
 cursor.execute("show columns from fencers")
 print 'Columns to be displayed:'
@@ -86,7 +85,7 @@ print '<select name = "attr", multiple>'
 for row in cursor:
     print '<option value = ' + row[0] + ' >' + row[0] + '</option>'
 print '</select>'
-
+    
 print '<br>'
 print 'Fencers to be displayed:'
 print '<br>'
@@ -99,6 +98,11 @@ print '</select>'
 
 print '<br><input type = "submit" value = "Submit" />'
 print '</form>'
+
+print '<form action="http://ada.sterncs.net/~bbroder/fencing.html">'
+print '<button type="submit">Home</button>'
+print '</form>'
+
 print '</body>'
 print '</html>'
 
