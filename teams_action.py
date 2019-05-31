@@ -38,7 +38,10 @@ form = cgi.FieldStorage()
 
 d = u = c = i = n = a = t = tup = 0
 
-cursor.execute("show columns from teams")
+try:
+   cursor.execute("show columns from teams")
+except mysql.connector.Error as e:
+        print "Error:", str(e)
 columns = {str(col[0]) for col in cursor.fetchall()}
 
 if form.getvalue('delete'):
