@@ -14,14 +14,40 @@ print '<body>'
 
 #DELETE                                                                                                     
 try:
-    cursor.execute("select bout_id, match_id, squad from round_bouts")
+    cursor.execute("select distinct round_number, match_id from rounds")
 except mysql.connector.Error as e:
     print "Error:", str(e)
-print 'Which bout would you like to delete?'
-print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "post">'
+results = cursor.fetchall()
+r0 = []
+r1 = []
+teamRes = []
+for res in results:
+    rn = str(res[0])
+    r0.append(rn)
+    mi = str(res[1])
+    r1.append(mi)
+    try:
+        cursor.execute("select team_id from rounds where round_number = %s and match_id = %s", (rn,mi))
+    except mysql.connector.Error as e:
+        print "Error:", str(e)
+    tr = cursor.fetchall()
+    trString = []
+    for e in tr:
+        trString.append(str(e)[3:-3])
+    teamRes.append(trString)
+
+
+matchesInRound = zip(r0, r1, teamRes)
+mir = []
+for i in matchesInRound:
+    mir.append(str(i))
+print 'Which match would you like to delete?'
+print '<br>Round | Match ID | Teams Playing'
+print '<form action = "/~bbroder/cgi-bin/rounds_action.py" method = "post">'
 print '<select name = "delete">'
-for row in cursor:
-    print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1] + ', ' + row[2]
+for row in matchesInRound:
+    r = str(row[0]) + ', ' + str(row[1]) + ', ' + str(row[2])
+    print '<option value = ' + row[0] + '&' + row[1]  + ' >' + r
 print '</select>'
 print '<br><input type = "submit" value = "Submit" />'
 print '</form>'
@@ -32,19 +58,24 @@ print '</p>'
 
 #UPDATE                                                                                                     
 try:
-    cursor.execute("select bout_id from round_bouts")
+    cursor.execute("select round_number, match_id, team_id from rounds")
 except mysql.connector.Error as e:
-        print "Error:", str(e)
-print 'Which bout would you like to update?'
-print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "post">'
+    print "Error:", str(e)
+results = cursor.fetchall()
+print 'Which match would you like to update?'
+print '<br>Round | Match ID | Team'
+print '<form action = "/~bbroder/cgi-bin/rounds_action.py" method = "post">'
 print '<select name = "update">'
-for row in cursor:
-    print '<option value = ' + row[0] + ' >' + row[0]
+for row in results:
+    r = str(row[0]) + ', ' + str(row[1]) + ', ' + str(row[2])
+    print '<option value = ' + str(row[0]) + '&' + str(row[1]) + '&' + str(row[2]) + ' >' + r
 print '</select>'
-
-cursor.execute("show columns from round_bouts")
+try:
+    cursor.execute("show columns from rounds")
+except mysql.connector.Error as e:
+    print "Error:", str(e)
 print '<br>'
-print 'Which attribute of this bout would you like to update?'
+print 'Which column of rounds would you like to update?'
 print '<select name = "column">'
 for row in cursor:
     print '<option value = ' + row[0] + ' >' + row[0]
@@ -58,20 +89,25 @@ print '*****'
 print '</p>'
 
 #INSERT                                                                                                     
-print 'New Bout to Insert:'
-print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "post">'
-print 'Bout ID: <input type = "text" name = "bout_id">  <br />'
-print 'Match ID: <input type = "text" name = "match_id">  <br />'
-print 'Squad: <input type = "text" name = "squad">  <br />'
-print 'Fencer IDs for Team A:<br>'
-print '1: <input type = "text" name = "f1a">  <br />'
-print '2: <input type = "text" name = "f2a">  <br />'
-print '3: <input type = "text" name = "f3a">  <br />'
-print '<br>'
-print 'Fencer IDs for Team B:<br>'
-print '1: <input type = "text" name = "f1b">  <br />'
-print '2: <input type = "text" name = "f2b">  <br />'
-print '3: <input type = "text" name = "f3b">  <br />'
+print 'New Match to Insert:'
+print '<form action = "/~bbroder/cgi-bin/rounds_action.py" method = "post">'
+print 'Round: <input type = "text" name = "round">  <br />'
+print 'Match_ID: <input type = "text" name = "match">  <br />'
+try:
+    cursor.execute("select team_id, team_name from teams")
+except mysql.connector.Error as e:
+    print "Error:", str(e)
+print 'Team A: '
+print '<select name = "teamA">'
+result = cursor.fetchall()
+for row in result:
+    print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1]
+print '</select>'
+print 'Team B: '
+print '<select name = "teamB">'
+for row in result:
+    print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1]
+print '</select>'
 print '<input type = "submit" value = "Submit" />'
 print '</form>'
 
@@ -80,30 +116,30 @@ print '*****'
 print '</p>'
 
 #SELECT                                                                                                     
-print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "POST">'
+print '<form action = "/~bbroder/cgi-bin/rounds_action.py" method = "POST">'
 try:
-    cursor.execute("show columns from round_bouts")
+    cursor.execute("show columns from rounds")
 except mysql.connector.Error as e:
-        print "Error:", str(e)
+    print "Error:", str(e)
 print 'Columns to be displayed:'
 print '<br>'
+
 print '<select name = "attr", multiple>'
 for row in cursor:
     print '<option value = ' + row[0] + ' >' + row[0] + '</option>'
 print '</select>'
 
 print '<br>'
-print 'Bouts to be displayed:'
+print 'Matches to be displayed:'
+print '<br>Match ID | Team'
 print '<br>'
 try:
-    cursor.execute("select bout_id from round_bouts")
+    cursor.execute("select match_id, team_id from rounds")
 except mysql.connector.Error as e:
-        print "Error:", str(e)
-
-print '<select name = "bout", multiple>'                                                                   \
-
+    print "Error:", str(e)
+print '<select name = "matches", multiple>'
 for row in cursor:
-    print '<option value = ' + row[0] + ' >' + row[0] + '</option>'
+    print '<option value = ' + str(row[0]) + ' >' + str(row[0]) + ', ' + str(row[1]) + '</option>'
 print '</select>'
 
 print '<br><input type = "submit" value = "Submit" />'
@@ -118,4 +154,3 @@ print '</html>'
 
 cursor.close()
 cnx.close()
-
