@@ -1,3 +1,5 @@
+**Deprecated**
+
 mysql> create table teams (
     -> team_id varchar(10) not null,
     -> team_name varchar(30) not null,
