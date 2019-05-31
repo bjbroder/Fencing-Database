@@ -1,8 +1,9 @@
-#!/usr/bin/python                                                                                           
+#!/usr/bin/python                                                                               
 
 import mysql.connector
 
-cnx = mysql.connector.connect(user='bbroder', password='dbkey', host='localhost', database='bbroder1')
+cnx = mysql.connector.connect(user='bbroder', password='dbkey', host='localhost', database='bbr\
+oder1')
 
 cursor = cnx.cursor()
 
@@ -12,10 +13,13 @@ print '<head>'
 print '</head>'
 print '<body>'
 
-#DELETE                                                                                                     
-cursor.execute("select bout_id, match_id, squad from round_bouts")
+#DELETE                                                                                         
+try:
+    cursor.execute("select bout_id, match_id, squad from round_bouts")
+except mysql.connector.Error as e:
+    print "Error:", str(e)
 print 'Which bout would you like to delete?'
-print '<form action = "/~bbroder/cgi-bin/bouts_action.py" method = "post">'
+print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "post">'
 print '<select name = "delete">'
 for row in cursor:
     print '<option value = ' + row[0] + ' >' + row[0] + ', ' + row[1] + ', ' + row[2]
@@ -27,35 +31,47 @@ print '<p>'
 print '*****'
 print '</p>'
 
-#UPDATE                                                                                                     
-cursor.execute("select bout_id from round_bouts")
-print 'Which bout would you like to update?'
-print '<form action = "/~bbroder/cgi-bin/bouts_action.py" method = "post">'
-print '<select name = "update">'
-for row in cursor:
-    print '<option value = ' + row[0] + ' >' + row[0]
-print '</select>'
+#UPDATE                                                                                         
+try:
+    cursor.execute("select bout_id from round_bouts")
+except mysql.connector.Error as e:
+        print "Error:", str(e)
+print 'Which bout would you like to update?'                                                   \
+
+print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "post">'
+print '<select name = "update">'                                                               \
+
+for row in cursor:                                                                             \
+
+    print '<option value = ' + row[0] + ' >' + row[0]                
+print '</select>'                                                                              \
+
 
 cursor.execute("show columns from round_bouts")
 print '<br>'
 print 'Which attribute of this bout would you like to update?'
-print '<select name = "column">'
-or row in cursor:
-    print '<option value = ' + row[0] + ' >' + row[0]
-print '</select>'
+print '<select name = "column">'                                                               \
+
+for row in cursor:                                                                             \
+
+    print '<option value = ' + row[0] + ' >' + row[0]                                          \
+
+print '</select>'                                                                              \
+
 print '<br>New Value: <input type = "text" name = "set">  <br />'
-print '<br><input type = "submit" value = "Submit" />'
+print '<br><input type = "submit" value = "Submit" />'                                         \
+
 print '</form>'
 
 print '<p>'
 print '*****'
 print '</p>'
 
-#INSERT                                                                                                     
+#INSERT                                                                                         
 print 'New Bout to Insert:'
-print '<form action = "/~bbroder/cgi-bin/bouts_action.py" method = "post">'
-print 'Bout ID: <input type = "text" name = "b_id">  <br />'
-print 'Match ID: <input type = "text" name = "m_id">  <br />'
+print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "post">'
+print 'Bout ID: <input type = "text" name = "bout_id">  <br />'
+print 'Match ID: <input type = "text" name = "match_id">  <br />'
 print 'Squad: <input type = "text" name = "squad">  <br />'
 print 'Fencer IDs for Team A:<br>'
 print '1: <input type = "text" name = "f1a">  <br />'
@@ -73,30 +89,41 @@ print '<p>'
 print '*****'
 print '</p>'
 
-#SELECT                                                                                                     
-print '<form action = "/~bbroder/cgi-bin/bouts_action.py" method = "POST">'
-cursor.execute("show columns from round_bouts")
+#SELECT                                                                                         
+print '<form action = "/~bbroder/cgi-bin/roundbouts_action.py" method = "POST">'
+try:
+    cursor.execute("show columns from round_bouts")
+except mysql.connector.Error as e:
+        print "Error:", str(e)
 print 'Columns to be displayed:'
 print '<br>'
 
-print '<select name = "attr", multiple>'
-for row in cursor:
+print '<select name = "attr", multiple>' 
+
+for row in cursor:                       
     print '<option value = ' + row[0] + ' >' + row[0] + '</option>'
 print '</select>'
 
 print '<br>'
 print 'Bouts to be displayed:'
 print '<br>'
-cursor.execute("select bout_id from round_bouts")
+try:
+    cursor.execute("select bout_id from round_bouts")
+except mysql.connector.Error as e:
+        print "Error:", str(e)
 
-print '<select name = "bout", multiple>'                                                                   \
-
-for row in cursor:
+print '<select name = "bout", multiple>'           
+for row in cursor:                                 
     print '<option value = ' + row[0] + ' >' + row[0] + '</option>'
 print '</select>'
 
 print '<br><input type = "submit" value = "Submit" />'
 print '</form>'
+
+print '<form action="http://ada.sterncs.net/~bbroder/fencing.html">'
+print '<button type="submit">Home</button>'
+print '</form>'
+
 print '</body>'
 print '</html>'
 
